@@ -1,0 +1,132 @@
+.select {
+  margin: 5px;
+  position: relative;
+  width: 220px;
+}
+
+.select__input {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: -2;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+}
+
+.select__button {
+  padding: 0.5em 1em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #000;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #eee;
+  }
+
+  .select.select--disabled & {
+    background-color: #eee;
+    border-color: #ccc;
+    color: #ccc;
+    pointer-events: none;
+  }
+
+  &-text {
+    color: #000;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    .select.select--disabled & {
+      color: #ccc;
+    }
+  }
+
+  &-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &-svg {
+    width: 12px;
+    height: 12px;
+
+    .select.select--disabled & {
+      fill: #ccc;
+    }
+
+    .select.select--open & {
+      transform: rotate(180deg);
+    }
+  }
+}
+
+.select__dropdown {
+  position: absolute;
+  width: 100%;
+  display: none;
+  z-index: 1;
+
+  .select.select--open & {
+    display: block;
+  }
+}
+
+.select__group {
+  & + & {
+    border-top: 1px solid #000;
+  }
+
+  &-list {
+    list-style: none;
+  }
+
+  &-name {
+    padding: 0.25em 1em;
+    border-bottom: 1px solid #000;
+    background-color: #eee;
+    font-weight: bold;
+  }
+}
+
+.select__options {
+  list-style: none;
+  background-color: #fff;
+  border: 1px solid #000;
+  border-top: none;
+
+  &-item {
+    padding: 0.5em 1em;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #eee;
+    }
+
+    & + & {
+      border-top: 1px solid #000;
+    }
+
+    &--selected {
+      background-color: #2db733;
+      color: #fff;
+
+      &:hover {
+        background-color: #2db733;
+        color: #fff;
+      }
+    }
+
+    &--disabled {
+      background-color: #eee;
+      border-color: #ccc;
+      color: #ccc;
+      pointer-events: none;
+    }
+  }
+}
