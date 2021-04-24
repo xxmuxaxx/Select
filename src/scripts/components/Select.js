@@ -93,28 +93,26 @@ const template = (params) => {
 class Select {
   constructor(base, options = {}) {
     if (base instanceof NodeList) {
-      return base.forEach((item) => new Select(item));
+      return base.forEach((item) => new Select(item, options));
     }
 
-    options = Object.assign(initilaState, options, {
-      children: base.children,
-      options: [...base.options],
-      placeholder: base.dataset.placeholder,
-    });
+    this.params = Object.assign(initilaState, options);
 
-    options.mainClass = !Boolean(base.className)
-      ? options.mainClass
-      : base.className;
+    this.mainClass = !Boolean(base.classList[0])
+      ? this.params.mainClass
+      : base.classList[0];
 
     // Base element
     this.base = base;
-    this.options = options.options;
+    this.multiple = this.base.multiple;
+    this.options = this.base.options;
     this.children = [...this.base.children];
+    this.classes = [this.mainClass, ...this.base.classList].join(" ");
 
     // Component element
     this.$wrapper = document.createElement("div");
-    this.$wrapper.classList.add(options.mainClass);
-    this.$wrapper.insertAdjacentHTML("afterbegin", template(options));
+    this.$wrapper.className = this.classes;
+    this.$wrapper.insertAdjacentHTML("afterbegin", template(this));
 
     this.$trigger = this.$wrapper.querySelector('[data-select="trigger"]');
     this.$text = this.$wrapper.querySelector('[data-select="text"]');
@@ -126,15 +124,15 @@ class Select {
     // State
     this.isOpen = false;
     this.isDisabled = this.base.disabled;
-    this.openClass = options.openClass;
-    this.disabledClass = options.disabledClass;
-    this.inputClass = options.inputClass;
+    this.openClass = `${this.mainClass}--${this.params.openClass}`;
+    this.disabledClass = `${this.mainClass}--${this.params.disabledClass}`;
+    this.inputClass = `${this.mainClass}__input`;
     this.selectedOption = null;
 
     // Callbacks
-    this.openCallback = options.openCallback;
-    this.closeCallback = options.closeCallback;
-    this.onChangeCallback = options.onChangeCallback;
+    this.onOpenCallback = this.params.onOpenCallback;
+    this.onCloseCallback = this.params.onCloseCallback;
+    this.onChangeCallback = this.params.onChangeCallback;
 
     // Support
     this.mutationObserver = new MutationObserver(
@@ -142,8 +140,6 @@ class Select {
     );
 
     this.init();
-
-    //console.log(this);
   }
 
   get selectedOptionIndex() {
@@ -165,6 +161,7 @@ class Select {
   }
 
   init() {
+    this.base.className = "";
     this.base.classList.add(this.inputClass);
     this.base.insertAdjacentElement("afterend", this.$wrapper);
     this.$wrapper.insertAdjacentElement("afterbegin", this.base);
@@ -172,6 +169,11 @@ class Select {
     this.disabled = this.isDisabled;
 
     this.$trigger.addEventListener("click", this.toggle.bind(this));
+
+    this.options.forEach((option, index) => {
+      if (option.selected) this.selectOption({ index });
+    });
+
     this.$options.forEach(($option, index) => {
       $option.addEventListener(
         "click",
@@ -201,7 +203,7 @@ class Select {
   open() {
     this.$wrapper.classList.add(this.openClass);
     this.isOpen = true;
-    this.openCallback();
+    this.onOpenCallback();
     this.onClickOutHandler = this.onClickOut.bind(this);
     document.addEventListener("click", this.onClickOutHandler);
   }
@@ -209,7 +211,7 @@ class Select {
   close() {
     this.$wrapper.classList.remove(this.openClass);
     this.isOpen = false;
-    this.closeCallback();
+    this.onCloseCallback();
     document.removeEventListener("click", this.onClickOutHandler);
   }
 
@@ -232,6 +234,23 @@ class Select {
     this.close();
   }
 
+  // selectMultipleOption({ index }) {
+  //   if (this.options[index].selected) {
+  //     this.options[index].selected = false;
+  //     this.$options[index].classList.remove("select__options-item--selected");
+  //   } else {
+  //     this.options[index].selected = true;
+  //     this.$options[index].classList.add("select__options-item--selected");
+  //   }
+
+  //   this.selectedOption = [...this.options].filter((option) => option.selected);
+
+  //   const text = this.selectedOption.map((option) => option.textContent);
+
+  //   this.changeName(text.join(", ") || this.options[0].textContent);
+  //   this.onChangeCallback(this.options[this.selectedOption]);
+  // }
+
   changeName(text) {
     this.$text.textContent = text;
   }
@@ -248,11 +267,10 @@ class Select {
 const initilaState = {
   placeholder: null,
   mainClass: "select",
-  inputClass: "select__input",
-  openClass: "select--open",
-  disabledClass: "select--disabled",
-  openCallback: () => {},
-  closeCallback: () => {},
+  openClass: "open",
+  disabledClass: "disabled",
+  onOpenCallback: () => {},
+  onCloseCallback: () => {},
   onChangeCallback: () => {},
 };
 
