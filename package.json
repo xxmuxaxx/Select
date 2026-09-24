@@ -1,7 +1,7 @@
 {
   "name": "select",
   "version": "0.0.3",
-  "description": "A light foundation for your next frontend project based on webpack.",
+  "description": "Кастомный компонент выпадающего списка на чистом JavaScript, заменяющий нативный <select>.",
   "scripts": {
     "lint": "npm run lint:styles; npm run lint:scripts",
     "lint:styles": "stylelint src",
@@ -11,21 +11,22 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wbkd/webpack-starter.git"
+    "url": "git+https://github.com/xxmuxaxx/Select.git"
   },
   "keywords": [
-    "webpack",
-    "startkit",
-    "frontend",
-    "es6",
+    "select",
+    "dropdown",
+    "component",
+    "custom-select",
     "javascript",
-    "webdev"
+    "vanilla-js"
   ],
-  "author": "webkid.io",
+  "author": "xxmuxaxx",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/wbkd/webpack-starter/issues"
+    "url": "https://github.com/xxmuxaxx/Select/issues"
   },
+  "homepage": "https://github.com/xxmuxaxx/Select#readme",
   "devDependencies": {
     "@babel/core": "^7.12.9",
     "@babel/plugin-proposal-class-properties": "^7.12.1",
